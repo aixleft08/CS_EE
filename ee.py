@@ -2,8 +2,9 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression, LinearRegression
 from sklearn.metrics import (precision_score, recall_score, f1_score, 
-                            classification_report, mean_squared_error, r2_score)
+                             confusion_matrix, ConfusionMatrixDisplay)
 from imblearn.under_sampling import RandomUnderSampler
+import matplotlib.pyplot as plt
 
 def load_local_data():
     """Load dataset from local file"""
@@ -58,8 +59,6 @@ def train_and_evaluate_models(X_train, X_test, y_train, y_test):
     print(f"Precision: {precision_score(y_test, y_pred_log):.4f}")
     print(f"Recall: {recall_score(y_test, y_pred_log):.4f}")
     print(f"F1-score: {f1_score(y_test, y_pred_log):.4f}")
-    print("Classification Report:")
-    print(classification_report(y_test, y_pred_log))
     
     # Evaluate Linear Regression (Regression Metrics)
     y_pred_lin = lin_reg.predict(X_test)
@@ -71,6 +70,24 @@ def train_and_evaluate_models(X_train, X_test, y_train, y_test):
     print(f"Precision: {precision_score(y_test, y_pred_lin_class):.4f}")
     print(f"Recall: {recall_score(y_test, y_pred_lin_class):.4f}")
     print(f"F1-score: {f1_score(y_test, y_pred_lin_class):.4f}")
+
+    # Logistic Regression Confusion Matrix
+    cm_log = confusion_matrix(y_test, y_pred_log)
+    print("\nLogistic Regression Confusion Matrix:")
+    print(cm_log)
+    disp_log = ConfusionMatrixDisplay(confusion_matrix=cm_log, display_labels=['Legitimate', 'Fraud'])
+    disp_log.plot(cmap='Blues')
+    plt.title('Logistic Regression Confusion Matrix')
+    plt.show()
+    
+    # Linear Regression Confusion Matrix
+    cm_lin = confusion_matrix(y_test, y_pred_lin_class)
+    print("\nLinear Regression Confusion Matrix:")
+    print(cm_lin)
+    disp_lin = ConfusionMatrixDisplay(confusion_matrix=cm_lin, display_labels=['Legitimate', 'Fraud'])
+    disp_lin.plot(cmap='Oranges')
+    plt.title('Linear Regression Confusion Matrix (Threshold=0.5)')
+    plt.show()
 
 # Main execution
 if __name__ == "__main__":
